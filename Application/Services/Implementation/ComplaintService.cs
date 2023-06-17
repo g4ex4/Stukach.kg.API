@@ -170,4 +170,10 @@ public class ComplaintService : IComplaintService
     }
 
     
+    public async Task<Complaint> GetComplaintsById(long complainId)
+    {
+        var complaint = await _unitOfWork.GetRepository<Complaint>()
+            .Where(x => x.Id == complainId).FirstOrDefaultAsync();
+        return complaint;
+    }
 }

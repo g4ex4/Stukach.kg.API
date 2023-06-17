@@ -63,12 +63,20 @@ public class ComplaintController : Controller
         var result = await _complaintService.GetComplaintsByStatus(status);
         return Ok(result);
     }
-    
+
     [HttpGet("Get-allUsers")]
     [ProducesResponseType(typeof(User[]), 200)]
     public async Task<IActionResult> GetAllUsers()
     {
         var result = await _complaintService.GetAllUsers();
+        return Ok(result);
+    }
+
+    [HttpGet("Get-complaints-byId")]
+    [ProducesResponseType(typeof(Complaint[]), 200)]
+    public async Task<IActionResult> GetComplaintsById(long complaintId)
+    {
+        var result = await _complaintService.GetComplaintsById(complaintId);
         return Ok(result);
     }
 }

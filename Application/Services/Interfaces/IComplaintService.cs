@@ -13,4 +13,6 @@ public interface IComplaintService : IService
     Task<Response> ChangeComplaintStatus(long complaintId, ComplaintStatus status);
     Task<ComplaintData[]> GetComplaintsByStatus(ComplaintStatus status);
     Task<User[]> GetAllUsers();
+
+    Task<Complaint> GetComplaintsById(long complainId);
 }
