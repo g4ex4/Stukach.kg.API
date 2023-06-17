@@ -18,7 +18,6 @@ builder.Services
     .AddCorsPolicy();
 
 var app = builder.Build();
-app.UseCustomExceptionHandler();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -29,7 +28,7 @@ if (app.Environment.IsDevelopment())
             ("/swagger/v1/swagger.json", "Stukach.kg Api")
     );
 }
-
+app.ConfigureExceptionHandler();
 app.UseHsts();
 app.UseHttpsRedirection();
 app.UseRouting();

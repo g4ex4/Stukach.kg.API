@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Domain.Models
+namespace Domain.Common
 {
     public class Response
     {
@@ -19,8 +20,9 @@ namespace Domain.Models
             IsSuccess = isSuccess;
         }
 
-        public Response()
+        public override string ToString()
         {
+            return JsonSerializer.Serialize(this);
         }
     }
 }

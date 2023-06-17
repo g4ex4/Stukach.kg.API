@@ -5,6 +5,6 @@ namespace Application.Services.Interfaces;
 
 public interface IAuthService : IService
 {
-    Task<Response> Login(LoginRegisterData loginRegister);
+    Task<AuthResponse> Login(LoginRegisterData loginRegister);
     Task<AuthResponse> Register(LoginRegisterData loginRegister);
 }

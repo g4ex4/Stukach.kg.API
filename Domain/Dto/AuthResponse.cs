@@ -1,4 +1,4 @@
-﻿using Domain.Models;
+﻿using Domain.Common;
 
 namespace Domain.Dto;
 
