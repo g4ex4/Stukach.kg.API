@@ -18,7 +18,7 @@ public class AuthService : IAuthService
     {
         var user = await _unitOfWork.GetRepository<User>().FirstOrDefaultAsync(x =>
             x.PhoneNumber == loginRegister.PhoneNumber && x.Password == loginRegister.Password);
-        return user is not null ? new AuthResponse("Успешная авторизация") : new AuthResponse("Неудачно");
+        return user is not null ? new AuthResponse("Успешная авторизация", user.Id) : new AuthResponse("Неудачно", 0);
     }
 
     public async Task<AuthResponse> Register(LoginRegisterData loginRegister)
@@ -30,8 +30,9 @@ public class AuthService : IAuthService
         };
 
         await _unitOfWork.GetRepository<User>().AddAsync(newUser);
+        await _unitOfWork.SaveChanges();
 
-        return new AuthResponse("Успешная регистрация");
+        return new AuthResponse("Успешная регистрация", newUser.Id);
     }
     
     
