@@ -26,6 +26,14 @@ public class ComplaintService : IComplaintService
         newComplaint.Name = complaint.Name;
         newComplaint.ImageUrl = complaint.Image.Name;
         newComplaint.Status = ComplaintStatus.Created;
+        var uploadsFolder = Path.Combine("wwwroot", "uploads");
+        var uniqueFileName = complaint.Image.FileName;
+        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await complaint.Image.CopyToAsync(stream);
+        }
         await _unitOfWork.GetRepository<Complaint>().AddAsync(newComplaint);
         await _unitOfWork.SaveChanges();
     }
@@ -60,17 +68,32 @@ public class ComplaintService : IComplaintService
         }
     }
 
-    public async Task<UserComplaintData> GetComplaints(long userId)
+    public async Task<ComplaintData[]> GetComplaints(long? userId)
     {
         var complaints = await _unitOfWork.GetRepository<Complaint>()
             .GetAll()
-            .ToListAsync();
+            .ToArrayAsync();
+
+        if (userId is null) return _mapper.Map<Complaint[], ComplaintData[]>(complaints);
 
         var userComplaint = await _unitOfWork.GetRepository<UserComplaint>()
             .Where(x => x.UserId == userId)
             .ToListAsync();
-        
-        // var userComplaints = from 
-        return new UserComplaintData();
+
+        var userComplaints = from cs in complaints
+            join uc in userComplaint on cs.Id equals uc.ComplaintId
+            select new ComplaintData()
+            {
+                Id = cs.Id,
+                Author = new UserData(){PhoneNumber = _unitOfWork.GetRepository<User>().FirstOrDefaultAsync(x => x.Id == cs.AuthorId).Result.PhoneNumber},
+                CountLike = cs.CountLike,
+                CountDislike = cs.CountDislike,
+                Date = cs.Date,
+                ImageUrl = cs.ImageUrl,
+                Importance = uc.Importance,
+                Name = cs.Name,
+                Description = cs.Description
+            };
+        return userComplaints.ToArray();
     }
 }

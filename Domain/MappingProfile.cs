@@ -8,10 +8,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<AdminComplaintData, Complaint>()
-            .ReverseMap();
-
-        CreateMap<UserComplaintData, Complaint>()
+        CreateMap<ComplaintData, Complaint>()
             .ReverseMap();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Domain.Dto;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dal;
@@ -10,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<Region> Regions { get; set; }
     public DbSet<City> Cities { get; set; }
     public DbSet<UserComplaint> UserComplaints { get; set; }
+    public DbSet<Coordinate> Coordinates { get; set; }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }

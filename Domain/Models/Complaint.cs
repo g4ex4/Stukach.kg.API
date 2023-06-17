@@ -23,4 +23,6 @@ public class Complaint : BaseEntity<long>
     public User Author { get; set; }
 
     public IList<UserComplaint> UserComplaints { get; set; }
+
+    public Coordinate Coordinate { get; set; }
 }

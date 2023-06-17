@@ -34,4 +34,14 @@ public class ComplaintController : Controller
 
         return Ok();
     }
+
+    [HttpGet("get-complaints")]
+    [ProducesResponseType(typeof(ComplaintData[]), 200)]
+    public async Task<IActionResult> GetComplaints(int page, int pageSize, long? userId = null)
+    {
+        var result = await _complaintService.GetComplaints(userId);
+        result = result.AsEnumerable().Skip((page - 1) * pageSize).Take(pageSize).ToArray();
+
+        return Ok(result);
+    }
 }

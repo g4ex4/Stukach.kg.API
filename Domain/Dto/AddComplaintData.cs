@@ -11,4 +11,6 @@ public class AddComplaintData
     public IFormFile Image { get; set; }
 
     public DateTime Date { get; set; }
+
+    public CoordinateData CoordinateData { get; set; }
 }

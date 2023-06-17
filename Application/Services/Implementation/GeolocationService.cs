@@ -4,5 +4,10 @@ namespace Application.Services.Implementation;
 
 public class GeolocationService : IGeolocationService
 {
+    public GeolocationService()
+    {
+        
+    }
+    
     
 }
