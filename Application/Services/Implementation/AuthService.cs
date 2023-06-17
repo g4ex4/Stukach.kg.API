@@ -20,7 +20,7 @@ public class AuthService : IAuthService
         var user = await _unitOfWork.GetRepository<User>().FirstOrDefaultAsync(x =>
             x.PhoneNumber == loginRegister.PhoneNumber && x.Password == loginRegister.Password);
         return user is not null
-            ? new Response(200, "Успешная регистрация", true)
+            ? new Response(200, "Успешная авторизация", true)
             : throw new DException("Неправильный номер или пароль");
     }
 
