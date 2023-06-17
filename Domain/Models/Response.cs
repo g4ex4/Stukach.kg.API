@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    internal class Response
+    public class Response
     {
+        public int StatusCode { get; set; }
+        public string Message { get; set; }
+        public bool IsSuccess { get; set; }
+
+        public Response(int statusCode, string message, bool isSuccess)
+        {
+            StatusCode = statusCode;
+            Message = message;
+            IsSuccess = isSuccess;
+        }
     }
 }
