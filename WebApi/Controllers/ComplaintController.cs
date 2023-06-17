@@ -70,4 +70,12 @@ public class ComplaintController : Controller
         var result = await _complaintService.GetComplaintsByStatus(status);
         return Ok(result);
     }
+
+    [HttpGet("Get-complaints-byId")]
+    [ProducesResponseType(typeof(Complaint[]), 200)]
+    public async Task<IActionResult> GetComplaintsById(long complaintId)
+    {
+        var result = await _complaintService.GetComplaintsById(complaintId);
+        return Ok(result);
+    }
 }
