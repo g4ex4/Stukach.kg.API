@@ -1,6 +1,7 @@
 ﻿using Application.Integrations.Geocoding;
 using Application.Services.Interfaces;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Dal.interfaces;
 using Domain.Common;
 using Domain.Dto;
@@ -64,6 +65,7 @@ public class ComplaintService : IComplaintService
     {
         var complaint = await _unitOfWork
             .GetRepository<Complaint>()
+            .Include(x => x.UserComplaints)
             .FirstOrDefaultAsync(x => x.Id == complaintId);
         if (complaint == null)
         {
@@ -91,36 +93,41 @@ public class ComplaintService : IComplaintService
             default:
                 throw new ArgumentOutOfRangeException(nameof(importance), importance, null);
         }
+        complaint.UserComplaints.Add(userComplaint);
+        _unitOfWork.GetRepository<Complaint>().Update(complaint);
+        await _unitOfWork.SaveChanges();
         return new Response(200, "Изменено успешно", true);
     }
 
     public async Task<ComplaintData[]> GetComplaints(long? userId)
     {
         var complaints = await _unitOfWork.GetRepository<Complaint>()
-            .GetAll()
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.Region)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.District)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.City)
+            .Include(x => x.Author)
+            .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
 
-        if (userId is null) return _mapper.Map<Complaint[], ComplaintData[]>(complaints);
+        if (userId is null) return complaints;
 
         var userComplaint = await _unitOfWork.GetRepository<UserComplaint>()
             .Where(x => x.UserId == userId)
             .ToListAsync();
 
-        var userComplaints = from cs in complaints
-            join uc in userComplaint on cs.Id equals uc.ComplaintId
-            select new ComplaintData()
+        foreach (var userC in userComplaint)
+        {
+            foreach (var complaint in complaints)
             {
-                Id = cs.Id,
-                Author = new UserData(){PhoneNumber = _unitOfWork.GetRepository<User>().FirstOrDefaultAsync(x => x.Id == cs.AuthorId).Result.PhoneNumber},
-                CountLike = cs.CountLike,
-                CountDislike = cs.CountDislike,
-                Date = cs.Date,
-                ImageUrl = cs.ImageUrl,
-                Importance = uc.Importance,
-                Name = cs.Name,
-                Description = cs.Description
-            };
-        return userComplaints.ToArray();
+                if (userC.ComplaintId == complaint.Id)
+                    complaint.Importance = userC.Importance;
+            }
+        }
+
+        return complaints;
     }
 
     public async Task<Response> ChangeComplaintStatus(long complaintId, ComplaintStatus status)
@@ -136,11 +143,31 @@ public class ComplaintService : IComplaintService
         return new Response(200, "Статус изменен успешно!", true);
     }
 
-    public async Task<Complaint[]> GetComplaintsByStatus(ComplaintStatus status)
+    public async Task<ComplaintData[]> GetComplaintsByStatus(ComplaintStatus status)
     {
         var complaints = await _unitOfWork.GetRepository<Complaint>()
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.Region)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.District)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.City)
+            .Include(x => x.Author)
             .Where(x => x.Status == status)
+            .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
+        
+
         return complaints;
     }
+
+    public async Task<User[]> GetAllUsers()
+    {
+        var result = await _unitOfWork.GetRepository<User>()
+            .GetAll()
+            .ToArrayAsync();
+        return result;
+    }
+
+    
 }

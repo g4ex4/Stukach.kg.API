@@ -48,13 +48,6 @@ public class ComplaintController : Controller
         return Ok(result);
     }
 
-    [HttpGet("check")]
-    public async Task<IActionResult> CheckCoordinate([FromQuery] CoordinateData coordinateData)
-    {
-        var response = _openCageApiClient.Geocode($"{coordinateData.Latitude}+{coordinateData.Longitude}");
-        return Ok(response);
-    }
-
     [HttpPut("put-complaint-status-for-admin")]
     public async Task<IActionResult> ChangeComplaintStatus(long complaintId, ComplaintStatus status)
     {
@@ -64,10 +57,18 @@ public class ComplaintController : Controller
     }
 
     [HttpGet("Get-complaints-byComplaintStatus")]
-    [ProducesResponseType(typeof(Complaint[]), 200)]
+    [ProducesResponseType(typeof(ComplaintData[]), 200)]
     public async Task<IActionResult> GetComplaintsByStatus(ComplaintStatus status)
     {
         var result = await _complaintService.GetComplaintsByStatus(status);
+        return Ok(result);
+    }
+    
+    [HttpGet("Get-allUsers")]
+    [ProducesResponseType(typeof(User[]), 200)]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        var result = await _complaintService.GetAllUsers();
         return Ok(result);
     }
 }

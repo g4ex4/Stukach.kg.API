@@ -12,11 +12,13 @@ public class ComplaintData
 
     public string? ImageUrl { get; set; }
 
-    public int? CountLike { get; set; }
+    public int CountLike { get; set; }
 
-    public int? CountDislike { get; set; }
+    public int CountDislike { get; set; }
 
     public string? FullAddress { get; set; }
+
+    public CoordinateData Coordinate { get; set; }
 
     public DateTime? Date { get; set; }
 
