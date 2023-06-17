@@ -136,27 +136,12 @@ public class ComplaintService : IComplaintService
         return new Response(200, "Статус изменен успешно!", true);
     }
 
-    public async Task<ComplaintData[]> GetComplaintsByStatus(ComplaintStatus status)
+    public async Task<Complaint[]> GetComplaintsByStatus(ComplaintStatus status)
     {
         var complaints = await _unitOfWork.GetRepository<Complaint>()
             .Where(x => x.Status == status)
             .ToArrayAsync();
-        
-
-        var userComplaints = from cs in complaints
-                             
-                             select new ComplaintData()
-                             {
-                                 Id = cs.Id,
-                                 Author = new UserData() { PhoneNumber = _unitOfWork.GetRepository<User>().FirstOrDefaultAsync(x => x.Id == cs.AuthorId).Result.PhoneNumber },
-                                 CountLike = cs.CountLike,
-                                 CountDislike = cs.CountDislike,
-                                 Date = cs.Date,
-                                 ImageUrl = cs.ImageUrl,
-                                 Importance = uc.Importance,
-                                 Name = cs.Name,
-                                 Description = cs.Description
-                             };
-        return userComplaints.ToArray();
+       
+        return complaints;
     }
 }

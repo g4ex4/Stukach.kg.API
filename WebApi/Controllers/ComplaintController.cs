@@ -2,6 +2,7 @@
 using Application.Services.Interfaces;
 using Domain.Dto;
 using Domain.Enums;
+using Domain.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,6 +64,7 @@ public class ComplaintController : Controller
     }
 
     [HttpGet("Get-complaints-byComplaintStatus")]
+    [ProducesResponseType(typeof(Complaint[]), 200)]
     public async Task<IActionResult> GetComplaintsByStatus(ComplaintStatus status)
     {
         await _complaintService.GetComplaintsByStatus(status);
