@@ -12,9 +12,9 @@ public class Complaint : BaseEntity<long>
 
     public string? ImageUrl { get; set; }
 
-    public int? CountLike { get; set; }
+    public int CountLike { get; set; }
 
-    public int? CountDislike { get; set; }
+    public int CountDislike { get; set; }
 
     public DateTime? Date { get; set; }
 

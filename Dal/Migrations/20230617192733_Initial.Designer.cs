@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230617124923_ChangeNullabelProperties")]
-    partial class ChangeNullabelProperties
+    [Migration("20230617192733_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,9 @@ namespace Dal.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long?>("DistrictId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -40,6 +43,8 @@ namespace Dal.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DistrictId");
 
                     b.HasIndex("RegionId");
 
@@ -58,10 +63,10 @@ namespace Dal.Migrations
                         .IsRequired()
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("CountDislike")
+                    b.Property<int>("CountDislike")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CountLike")
+                    b.Property<int>("CountLike")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Date")
@@ -94,7 +99,13 @@ namespace Dal.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("ComplaintId")
+                    b.Property<long?>("CityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ComplaintId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DistrictId")
                         .HasColumnType("bigint");
 
                     b.Property<double?>("Latitude")
@@ -103,13 +114,43 @@ namespace Dal.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
+                    b.Property<long?>("RegionId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("CityId");
+
                     b.HasIndex("ComplaintId")
-                        .IsUnique()
-                        .HasFilter("[ComplaintId] IS NOT NULL");
+                        .IsUnique();
+
+                    b.HasIndex("DistrictId");
+
+                    b.HasIndex("RegionId");
 
                     b.ToTable("Coordinates");
+                });
+
+            modelBuilder.Entity("Domain.Models.District", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("RegionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegionId");
+
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("Domain.Models.Region", b =>
@@ -167,9 +208,17 @@ namespace Dal.Migrations
 
             modelBuilder.Entity("Domain.Models.City", b =>
                 {
-                    b.HasOne("Domain.Models.Region", null)
+                    b.HasOne("Domain.Models.District", "District")
+                        .WithMany("Cities")
+                        .HasForeignKey("DistrictId");
+
+                    b.HasOne("Domain.Models.Region", "Region")
                         .WithMany("Cities")
                         .HasForeignKey("RegionId");
+
+                    b.Navigation("District");
+
+                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("Domain.Models.Complaint", b =>
@@ -185,11 +234,43 @@ namespace Dal.Migrations
 
             modelBuilder.Entity("Domain.Models.Coordinate", b =>
                 {
+                    b.HasOne("Domain.Models.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Domain.Models.Complaint", "Complaint")
                         .WithOne("Coordinate")
-                        .HasForeignKey("Domain.Models.Coordinate", "ComplaintId");
+                        .HasForeignKey("Domain.Models.Coordinate", "ComplaintId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.District", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Models.Region", "Region")
+                        .WithMany()
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("City");
 
                     b.Navigation("Complaint");
+
+                    b.Navigation("District");
+
+                    b.Navigation("Region");
+                });
+
+            modelBuilder.Entity("Domain.Models.District", b =>
+                {
+                    b.HasOne("Domain.Models.Region", "Region")
+                        .WithMany("Districts")
+                        .HasForeignKey("RegionId");
+
+                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("Domain.Models.UserComplaint", b =>
@@ -219,9 +300,16 @@ namespace Dal.Migrations
                     b.Navigation("UserComplaints");
                 });
 
+            modelBuilder.Entity("Domain.Models.District", b =>
+                {
+                    b.Navigation("Cities");
+                });
+
             modelBuilder.Entity("Domain.Models.Region", b =>
                 {
                     b.Navigation("Cities");
+
+                    b.Navigation("Districts");
                 });
 #pragma warning restore 612, 618
         }

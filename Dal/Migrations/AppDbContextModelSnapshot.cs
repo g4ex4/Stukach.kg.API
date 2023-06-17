@@ -45,7 +45,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Cities", (string)null);
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("Domain.Models.Complaint", b =>
@@ -60,10 +60,10 @@ namespace Dal.Migrations
                         .IsRequired()
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("CountDislike")
+                    b.Property<int>("CountDislike")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CountLike")
+                    b.Property<int>("CountLike")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Date")
@@ -85,7 +85,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Complaints", (string)null);
+                    b.ToTable("Complaints");
                 });
 
             modelBuilder.Entity("Domain.Models.Coordinate", b =>
@@ -99,7 +99,7 @@ namespace Dal.Migrations
                     b.Property<long?>("CityId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("ComplaintId")
+                    b.Property<long>("ComplaintId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("DistrictId")
@@ -119,14 +119,13 @@ namespace Dal.Migrations
                     b.HasIndex("CityId");
 
                     b.HasIndex("ComplaintId")
-                        .IsUnique()
-                        .HasFilter("[ComplaintId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("DistrictId");
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Coordinates", (string)null);
+                    b.ToTable("Coordinates");
                 });
 
             modelBuilder.Entity("Domain.Models.District", b =>
@@ -148,7 +147,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Districts", (string)null);
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("Domain.Models.Region", b =>
@@ -164,7 +163,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Regions", (string)null);
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("Domain.Models.User", b =>
@@ -183,7 +182,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Domain.Models.UserComplaint", b =>
@@ -201,7 +200,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("ComplaintId");
 
-                    b.ToTable("UserComplaints", (string)null);
+                    b.ToTable("UserComplaints");
                 });
 
             modelBuilder.Entity("Domain.Models.City", b =>
@@ -234,19 +233,24 @@ namespace Dal.Migrations
                 {
                     b.HasOne("Domain.Models.City", "City")
                         .WithMany()
-                        .HasForeignKey("CityId");
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Models.Complaint", "Complaint")
                         .WithOne("Coordinate")
-                        .HasForeignKey("Domain.Models.Coordinate", "ComplaintId");
+                        .HasForeignKey("Domain.Models.Coordinate", "ComplaintId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Models.District", "District")
                         .WithMany()
-                        .HasForeignKey("DistrictId");
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Models.Region", "Region")
                         .WithMany()
-                        .HasForeignKey("RegionId");
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("City");
 
