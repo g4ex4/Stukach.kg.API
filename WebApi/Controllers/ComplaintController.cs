@@ -62,10 +62,12 @@ public class ComplaintController : Controller
         return Ok();
     }
 
-    [HttpGet("Get-complaints-byStatus")]
+    [HttpGet("Get-complaints-byComplaintStatus")]
     public async Task<IActionResult> GetComplaintsByStatus(ComplaintStatus status)
     {
         await _complaintService.GetComplaintsByStatus(status);
         return Ok();
     }
+
+
 }

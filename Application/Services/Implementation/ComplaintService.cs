@@ -144,6 +144,7 @@ public class ComplaintService : IComplaintService
         
 
         var userComplaints = from cs in complaints
+                             
                              select new ComplaintData()
                              {
                                  Id = cs.Id,
@@ -152,6 +153,7 @@ public class ComplaintService : IComplaintService
                                  CountDislike = cs.CountDislike,
                                  Date = cs.Date,
                                  ImageUrl = cs.ImageUrl,
+                                 Importance = uc.Importance,
                                  Name = cs.Name,
                                  Description = cs.Description
                              };
