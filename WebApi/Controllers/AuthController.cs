@@ -21,7 +21,6 @@ public class AuthController : Controller
     public async Task<IActionResult> Login(LoginRegisterData loginRegister)
     {
         var response = await _authService.Login(loginRegister);
-
         return Ok(response);
     }
 

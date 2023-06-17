@@ -18,7 +18,7 @@ builder.Services
     .AddCorsPolicy();
 
 var app = builder.Build();
-
+app.UseCustomExceptionHandler();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -31,7 +31,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHsts();
-app.ConfigureExceptionHandler();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
