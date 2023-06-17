@@ -1,4 +1,5 @@
-﻿using Application.Services.Interfaces;
+﻿using Application.Integrations.Geocoding;
+using Application.Services.Interfaces;
 using AutoMapper;
 using Dal.interfaces;
 using Domain.Dto;
@@ -12,11 +13,18 @@ public class ComplaintService : IComplaintService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly OpenCageApiClient _openCageApiClient;
+    private readonly IAddressService _addressService;
 
-    public ComplaintService(IUnitOfWork unitOfWork, IMapper mapper)
+    public ComplaintService(IUnitOfWork unitOfWork, 
+        IMapper mapper, 
+        OpenCageApiClient openCageApiClient,
+        IAddressService addressService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _openCageApiClient = openCageApiClient;
+        _addressService = addressService;
     }
 
     public async Task AddComplaint(AddComplaintData complaint)
@@ -25,6 +33,7 @@ public class ComplaintService : IComplaintService
         newComplaint.Date = complaint.Date;
         newComplaint.Name = complaint.Name;
         newComplaint.AuthorId = complaint.UserId;
+        newComplaint.Description = complaint.Description;
         // newComplaint.ImageUrl = complaint.Image.Name;
         newComplaint.Status = ComplaintStatus.Created;
         // var uploadsFolder = Path.Combine("wwwroot", "uploads");
@@ -35,6 +44,17 @@ public class ComplaintService : IComplaintService
         // {
         //     await complaint.Image.CopyToAsync(stream);
         // }
+        var geoResponse = await _openCageApiClient
+            .Geocode($"{complaint.Coordinate.Latitude}+{complaint.Coordinate.Longitude}");
+        var address = await _addressService.FillAddress(geoResponse);
+        newComplaint.Coordinate = new Coordinate
+        {
+            Latitude = complaint.Coordinate.Latitude,
+            Longitude = complaint.Coordinate.Longitude,
+            Region = address.Item1,
+            District = address.Item2,
+            City = address.Item3
+        };
         await _unitOfWork.GetRepository<Complaint>().AddAsync(newComplaint);
         await _unitOfWork.SaveChanges();
     }

@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Dal.interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Dal.Implementation;
 
@@ -69,4 +70,8 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     }
 
     public bool Any(Expression<Func<TEntity, bool>> expression = null) => _dbSet.Any(expression);
+    public IIncludableQueryable<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> expression)
+    {
+        return _dbSet.Include(expression);
+    }
 }

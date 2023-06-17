@@ -4,6 +4,7 @@ using Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230617155347_AddDistrictEntity")]
+    partial class AddDistrictEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,14 +100,12 @@ namespace Dal.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CityId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<long?>("ComplaintId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("DistrictId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<double?>("Latitude")
@@ -114,7 +115,6 @@ namespace Dal.Migrations
                         .HasColumnType("float");
 
                     b.Property<long?>("RegionId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -237,9 +237,7 @@ namespace Dal.Migrations
                 {
                     b.HasOne("Domain.Models.City", "City")
                         .WithMany()
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CityId");
 
                     b.HasOne("Domain.Models.Complaint", "Complaint")
                         .WithOne("Coordinate")
@@ -247,15 +245,11 @@ namespace Dal.Migrations
 
                     b.HasOne("Domain.Models.District", "District")
                         .WithMany()
-                        .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("DistrictId");
 
                     b.HasOne("Domain.Models.Region", "Region")
                         .WithMany()
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("RegionId");
 
                     b.Navigation("City");
 

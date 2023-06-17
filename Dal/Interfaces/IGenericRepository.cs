@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Dal.interfaces;
 
@@ -27,4 +28,6 @@ public interface IGenericRepository<TEntity> where TEntity : class, IBaseEntity
     Task AddRangeAsync(IEnumerable<TEntity> entities);
 
     bool Any(Expression<Func<TEntity, bool>> expression = null);
+
+    IIncludableQueryable<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> expression);
 }

@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<City> Cities { get; set; }
     public DbSet<UserComplaint> UserComplaints { get; set; }
     public DbSet<Coordinate> Coordinates { get; set; }
+    public DbSet<District> Districts { get; set; }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }

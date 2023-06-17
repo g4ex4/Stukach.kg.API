@@ -61,7 +61,7 @@ public static class IocConfig
             }
         }
 
-        services.AddSingleton(new Geocoding("1ffd90282091439fb47d1573fe6a3b11"));
+        services.AddSingleton(new OpenCageApiClient("1ffd90282091439fb47d1573fe6a3b11"));
         
         return services;
     }

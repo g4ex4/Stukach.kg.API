@@ -13,12 +13,12 @@ namespace WebApi.Controllers;
 public class ComplaintController : Controller
 {
     private readonly IComplaintService _complaintService;
-    private readonly Geocoding _geocoding;
+    private readonly OpenCageApiClient _openCageApiClient;
 
-    public ComplaintController(IComplaintService complaintService, Geocoding geocoding)
+    public ComplaintController(IComplaintService complaintService, OpenCageApiClient openCageApiClient)
     {
         _complaintService = complaintService;
-        _geocoding = geocoding;
+        _openCageApiClient = openCageApiClient;
     }
 
     [HttpPost("add-complaint")]
@@ -50,7 +50,7 @@ public class ComplaintController : Controller
     [HttpGet("check")]
     public async Task<IActionResult> CheckCoordinate([FromQuery] CoordinateData coordinateData)
     {
-        var response = _geocoding.Geocode(coordinateData);
+        var response = _openCageApiClient.Geocode($"{coordinateData.Latitude}+{coordinateData.Longitude}");
         return Ok(response);
     }
 }
