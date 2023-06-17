@@ -7,7 +7,7 @@ namespace Application.Services.Interfaces;
 
 public interface IComplaintService : IService
 {
-    Task AddComplaint(AddComplaintData complaint);
+    Task<Response> AddComplaint(AddComplaintData complaint);
     Task<Response> PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance);
     Task<ComplaintData[]> GetComplaints(long? userId);
     Task<Response> ChangeComplaintStatus(long complaintId, ComplaintStatus status);

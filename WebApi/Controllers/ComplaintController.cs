@@ -26,17 +26,17 @@ public class ComplaintController : Controller
     [ProducesResponseType(200)]
     public async Task<IActionResult> AddComplaint([FromBody] AddComplaintData complaint)
     {
-        await _complaintService.AddComplaint(complaint);
+        var result = await _complaintService.AddComplaint(complaint);
 
-        return Ok();
+        return Ok(result);
     }
     
     [HttpPut("put-complaint-status")]
     public async Task<IActionResult> PutComplaintStatus(long userId, long complaintId, ComplaintImportance importance)
     {
-        await _complaintService.PutStatusComplaint(userId, complaintId, importance);
+        var result = await _complaintService.PutStatusComplaint(userId, complaintId, importance);
 
-        return Ok();
+        return Ok(result);
     }
 
     [HttpGet("get-complaints")]
@@ -58,9 +58,9 @@ public class ComplaintController : Controller
     [HttpPut("put-complaint-status-for-admin")]
     public async Task<IActionResult> ChangeComplaintStatus(long complaintId, ComplaintStatus status)
     {
-        await _complaintService.ChangeComplaintStatus(complaintId, status);
+        var result = await _complaintService.ChangeComplaintStatus(complaintId, status);
 
-        return Ok();
+        return Ok(result);
     }
 
     [HttpGet("Get-complaints-byComplaintStatus")]

@@ -29,7 +29,7 @@ public class ComplaintService : IComplaintService
         _addressService = addressService;
     }
 
-    public async Task AddComplaint(AddComplaintData complaint)
+    public async Task<Response> AddComplaint(AddComplaintData complaint)
     {
         var newComplaint = new Complaint();
         newComplaint.Date = complaint.Date;
@@ -58,6 +58,7 @@ public class ComplaintService : IComplaintService
         await _unitOfWork.GetRepository<Coordinate>().AddAsync(newComplaint.Coordinate);
         await _unitOfWork.GetRepository<Complaint>().AddAsync(newComplaint);
         await _unitOfWork.SaveChanges();
+        return new Response(200, "Жалоба успешно отправлена!", true);
     }
 
     public async Task<Response> PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance)
