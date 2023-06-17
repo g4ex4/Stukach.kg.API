@@ -16,7 +16,7 @@ public interface IGenericRepository<TEntity> where TEntity : class, IBaseEntity
 
     Task<TEntity> FirstOrDefaultAsync();
 
-    Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> expression);
+    Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> expression);
 
     void AddRange(IEnumerable<TEntity> entities);
 

@@ -9,12 +9,12 @@
     }
   },
   "profiles": {
-    "http": {
+    "Stukach": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5027",
+      "applicationUrl": "http://192.168.88.14:8001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
