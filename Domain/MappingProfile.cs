@@ -16,5 +16,8 @@ public class MappingProfile : Profile
             .ForMember(x => x.Coordinate,
                 opt => opt.MapFrom(x => new CoordinateData(){Longitude = x.Coordinate.Longitude, Latitude = x.Coordinate.Latitude, ComplaintId = x.Id}))
             .ReverseMap();
+
+        CreateMap<User, UserData>()
+            .ReverseMap();
     }
 }

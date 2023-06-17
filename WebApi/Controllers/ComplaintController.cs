@@ -1,5 +1,6 @@
 ﻿using Application.Integrations.Geocoding;
 using Application.Services.Interfaces;
+using Domain.Common;
 using Domain.Dto;
 using Domain.Enums;
 using Domain.Models;
@@ -14,12 +15,10 @@ namespace WebApi.Controllers;
 public class ComplaintController : Controller
 {
     private readonly IComplaintService _complaintService;
-    private readonly OpenCageApiClient _openCageApiClient;
 
     public ComplaintController(IComplaintService complaintService, OpenCageApiClient openCageApiClient)
     {
         _complaintService = complaintService;
-        _openCageApiClient = openCageApiClient;
     }
 
     [HttpPost("add-complaint")]
@@ -34,7 +33,15 @@ public class ComplaintController : Controller
     [HttpPut("put-complaint-importance")]
     public async Task<IActionResult> PutComplaintImportance(long userId, long complaintId, ComplaintImportance importance)
     {
-        var result = await _complaintService.PutComplaintImportance(userId, complaintId, importance);
+        Response result;
+        try
+        {
+            result = await _complaintService.PutComplaintImportance(userId, complaintId, importance);
+        }
+        catch (NotFoundException e)
+        {
+            return BadRequest(new Response(400, e.Message, false));
+        }
 
         return Ok(result);
     }
@@ -66,7 +73,7 @@ public class ComplaintController : Controller
 
 
     [HttpGet("get-complaints-by-id")]
-    [ProducesResponseType(typeof(Complaint[]), 200)]
+    [ProducesResponseType(typeof(ComplaintData), 200)]
     public async Task<IActionResult> GetComplaintsById(long complaintId)
     {
         var result = await _complaintService.GetComplaintsById(complaintId);
@@ -81,11 +88,19 @@ public class ComplaintController : Controller
         return Ok(result);
     }
     
-    [HttpGet("get-complaints-by-id")]
+    [HttpGet("get-complaints-by-user-id")]
     [ProducesResponseType(typeof(Complaint[]), 200)]
     public async Task<IActionResult> GetComplaintsByUserId(long userId)
     {
-        var result = await _complaintService.GetComplaintsByUserId(userId);
+        Complaint result;
+        try
+        {
+            result = await _complaintService.GetComplaintsByUserId(userId);
+        }
+        catch (NotFoundException e)
+        {
+            return BadRequest(new Response(400, e.Message, false));
+        }
         return Ok(result);
     }
 }

@@ -64,13 +64,13 @@ public class SeedData
         {
             new Complaint
             {
-                Name = "Complaint 1", AuthorId = users[0].Id, Description = "Description 1", CountLike = 2,
-                CountDislike = 1, Date = DateTime.Now, Status = ComplaintStatus.Review
+                Name = "Complaint 1", AuthorId = users[0].Id, Description = "Description 1"
+                , Date = DateTime.Now, Status = ComplaintStatus.Review
             },
             new Complaint
             {
-                Name = "Complaint 2", AuthorId = users[1].Id, Description = "Description 2", CountLike = 0,
-                CountDislike = 3, Date = DateTime.Now, Status = ComplaintStatus.Completed
+                Name = "Complaint 2", AuthorId = users[1].Id, Description = "Description 2", 
+                 Date = DateTime.Now, Status = ComplaintStatus.Completed
             },
             // Добавьте другие жалобы по вашему усмотрению
         };

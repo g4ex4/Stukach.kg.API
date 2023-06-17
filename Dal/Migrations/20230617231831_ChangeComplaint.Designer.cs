@@ -4,6 +4,7 @@ using Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230617231831_ChangeComplaint")]
+    partial class ChangeComplaint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +38,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brigade", (string)null);
+                    b.ToTable("Brigade");
                 });
 
             modelBuilder.Entity("Domain.Models.City", b =>
@@ -61,7 +64,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Cities", (string)null);
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("Domain.Models.Complaint", b =>
@@ -100,7 +103,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("BrigadeId");
 
-                    b.ToTable("Complaints", (string)null);
+                    b.ToTable("Complaints");
                 });
 
             modelBuilder.Entity("Domain.Models.Coordinate", b =>
@@ -140,7 +143,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Coordinates", (string)null);
+                    b.ToTable("Coordinates");
                 });
 
             modelBuilder.Entity("Domain.Models.District", b =>
@@ -162,7 +165,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Districts", (string)null);
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("Domain.Models.Region", b =>
@@ -178,7 +181,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Regions", (string)null);
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("Domain.Models.User", b =>
@@ -197,7 +200,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Domain.Models.UserComplaint", b =>
@@ -215,7 +218,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("ComplaintId");
 
-                    b.ToTable("UserComplaints", (string)null);
+                    b.ToTable("UserComplaints");
                 });
 
             modelBuilder.Entity("Domain.Models.City", b =>

@@ -51,7 +51,7 @@ public class AuthController : Controller
     
     
     [HttpGet("get-all-users")]
-    [ProducesResponseType(typeof(User[]), 200)]
+    [ProducesResponseType(typeof(UserData[]), 200)]
     public async Task<IActionResult> GetAllUsers()
     {
         var result = await _authService.GetAllUsers();

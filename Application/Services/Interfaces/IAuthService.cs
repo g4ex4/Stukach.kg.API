@@ -7,5 +7,5 @@ public interface IAuthService : IService
 {
     Task<AuthResponse> Login(LoginRegisterData loginRegister);
     Task<AuthResponse> Register(LoginRegisterData loginRegister);
-    Task<User[]> GetAllUsers();
+    Task<UserData[]> GetAllUsers();
 }

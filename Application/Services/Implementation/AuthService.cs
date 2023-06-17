@@ -1,4 +1,6 @@
 ﻿using Application.Services.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Dal.interfaces;
 using Domain.Common;
 using Domain.Dto;
@@ -10,10 +12,12 @@ namespace Application.Services.Implementation;
 public class AuthService : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public AuthService(IUnitOfWork unitOfWork)
+    public AuthService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<AuthResponse> Login(LoginRegisterData loginRegister)
@@ -46,10 +50,11 @@ public class AuthService : IAuthService
     }
     
 
-    public async Task<User[]> GetAllUsers()
+    public async Task<UserData[]> GetAllUsers()
     {
         var result = await _unitOfWork.GetRepository<User>()
             .GetAll()
+            .ProjectTo<UserData>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
         return result;
     }

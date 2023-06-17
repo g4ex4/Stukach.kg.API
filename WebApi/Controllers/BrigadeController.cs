@@ -20,7 +20,7 @@ public class BrigadeController : Controller
         _openCageApiClient = openCageApiClient;
     }
 
-    [HttpPost("Create-Brigade")]
+    [HttpPost("create-brigade")]
     public async Task<IActionResult> CreateBrigade([FromBody] BrigadeDTO dto)
     {
         var result = _brigadeService.CreateBrigade(dto);
@@ -28,14 +28,14 @@ public class BrigadeController : Controller
     }
 
 
-    [HttpPut("Set-ComplaintOn-Brigade")]
+    [HttpPut("set-complaintOn-brigade")]
     public async Task<IActionResult> SetComplaintOnBridage(long complaintId, long brigadeId)
     {
         var result = _brigadeService.SetComplaintOnBridage(complaintId, brigadeId);
         return Ok(result);
     }
 
-    [HttpGet("Get-Bridage's-ComplaintsByBrigadeId")]
+    [HttpGet("get-bridage's-complaints-by-brigadeId")]
     public async Task<IActionResult> GetComplaintsByBrigadeId(long brigadeId)
     {
         var result = _brigadeService.GetComplaintsByBrigadeId(brigadeId);

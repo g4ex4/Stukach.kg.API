@@ -1,4 +1,5 @@
-﻿using Application.Integrations.Geocoding;
+﻿using Application.Helpers;
+using Application.Integrations.Geocoding;
 using Application.Services.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -84,18 +85,6 @@ public class ComplaintService : IComplaintService
 
         userComplaint.Importance = importance;
 
-        switch (importance)
-        {
-            case ComplaintImportance.Like:
-                complaint.CountLike += 1;
-                break;
-            case ComplaintImportance.Dislike:
-                complaint.CountDislike += 1;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(importance), importance, null);
-        }
-
         complaint.UserComplaints.Add(userComplaint);
         _unitOfWork.GetRepository<Complaint>().Update(complaint);
         await _unitOfWork.SaveChanges();
@@ -112,12 +101,17 @@ public class ComplaintService : IComplaintService
             .Include(x => x.Coordinate)
             .ThenInclude(x => x.City)
             .Include(x => x.Author)
-            .OrderBy(x => x.CountLike)
-            .ThenByDescending(x => x.CountDislike)
             .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
-            .ToArrayAsync();
+            .ToListAsync();
+        foreach (var complaint in complaints)
+        {
+            complaint.CountLike = await ComplaintHelper
+                .GetCountImportance(_unitOfWork, complaint.Id, ComplaintImportance.Like);
+            complaint.CountDislike = await ComplaintHelper
+                .GetCountImportance(_unitOfWork, complaint.Id, ComplaintImportance.Dislike);
+        }
 
-        if (userId is null) return complaints;
+        if (userId is null) return complaints.ToArray();
 
         var userComplaint = await _unitOfWork.GetRepository<UserComplaint>()
             .Where(x => x.UserId == userId)
@@ -132,7 +126,10 @@ public class ComplaintService : IComplaintService
             }
         }
 
-        return complaints;
+        return complaints
+            .OrderByDescending(x => x.CountLike)
+            .ThenBy(x => x.CountDislike)
+            .ToArray();
     }
 
     public async Task<Response> PutComplaintStatus(long complaintId, ComplaintStatus status)
@@ -162,12 +159,21 @@ public class ComplaintService : IComplaintService
             .ThenInclude(x => x.City)
             .Include(x => x.Author)
             .Where(x => x.Status == status)
-            .OrderBy(x => x.CountLike)
-            .ThenByDescending(x => x.CountDislike)
             .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
+        
+        foreach (var complaint in complaints)
+        {
+            complaint.CountLike = await ComplaintHelper
+                .GetCountImportance(_unitOfWork, complaint.Id, ComplaintImportance.Like);
+            complaint.CountDislike = await ComplaintHelper
+                .GetCountImportance(_unitOfWork, complaint.Id, ComplaintImportance.Dislike);
+        }
 
-        return complaints;
+        return complaints
+            .OrderByDescending(x => x.CountLike)
+            .ThenBy(x => x.CountDislike)
+            .ToArray();
     }
 
     public async Task<ComplaintData> GetComplaintsById(long complainId)
@@ -198,13 +204,21 @@ public class ComplaintService : IComplaintService
             .Where(x => x.Coordinate.RegionId == regionId 
                         && (districtId == null || x.Coordinate.DistrictId == districtId )
                         && (cityId == null || x.Coordinate.CityId == cityId))
-            .OrderBy(x => x.CountLike)
-            .ThenByDescending(x => x.CountDislike)
             .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
 
+        foreach (var complaint in complaints)
+        {
+            complaint.CountLike = await ComplaintHelper
+                .GetCountImportance(_unitOfWork, complaint.Id, ComplaintImportance.Like);
+            complaint.CountDislike = await ComplaintHelper
+                .GetCountImportance(_unitOfWork, complaint.Id, ComplaintImportance.Dislike);
+        }
 
-        return complaints;
+        return complaints
+            .OrderByDescending(x => x.CountLike)
+            .ThenBy(x => x.CountDislike)
+            .ToArray();
     }
 
     public Task<Complaint> GetComplaintsByUserId(long userId)
