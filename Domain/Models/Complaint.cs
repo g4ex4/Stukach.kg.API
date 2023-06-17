@@ -6,6 +6,8 @@ public class Complaint : BaseEntity<long>
 {
     public string? Name { get; set; }
 
+    public long? BrigadeId { get; set; }
+
     public long? AuthorId { get; set; }
 
     public string? Description { get; set; }
@@ -25,4 +27,6 @@ public class Complaint : BaseEntity<long>
     public IList<UserComplaint> UserComplaints { get; set; }
 
     public Coordinate Coordinate { get; set; }
+
+    public Brigade? Brigade { get; set; }
 }

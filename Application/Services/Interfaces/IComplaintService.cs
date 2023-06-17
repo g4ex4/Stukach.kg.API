@@ -8,11 +8,10 @@ namespace Application.Services.Interfaces;
 public interface IComplaintService : IService
 {
     Task<Response> AddComplaint(AddComplaintData complaint);
-    Task<Response> PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance);
+    Task<Response> PutComplaintImportance(long userId, long complaintId, ComplaintImportance importance);
     Task<ComplaintData[]> GetComplaints(long? userId);
-    Task<Response> ChangeComplaintStatus(long complaintId, ComplaintStatus status);
+    Task<Response> PutComplaintStatus(long complaintId, ComplaintStatus status);
     Task<ComplaintData[]> GetComplaintsByStatus(ComplaintStatus status);
-    Task<User[]> GetAllUsers();
-
-    Task<Complaint> GetComplaintsById(long complainId);
+    Task<ComplaintData> GetComplaintsById(long complainId);
+    Task<ComplaintData[]> GetComplaintByAddress(long? regionId, long? districtId, long? cityId);
 }

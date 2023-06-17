@@ -69,4 +69,31 @@ public class AddressService : IAddressService
 
         return new Tuple<Region, District, City>(region, district, city);
     }
+
+    public async Task<Region[]> GetRegions()
+    {
+        var regions = await _unitOfWork.GetRepository<Region>()
+            .GetAll()
+            .ToArrayAsync();
+
+        return regions;
+    }
+
+    public async Task<District[]> GetDistricts(long regionId)
+    {
+        var districts = await _unitOfWork.GetRepository<District>()
+            .Where(x => x.RegionId == regionId)
+            .ToArrayAsync();
+
+        return districts;
+    }
+
+    public async Task<City[]> GetCities(long districtId)
+    {
+        var cities = await _unitOfWork.GetRepository<City>()
+            .Where(x => x.DistrictId == districtId)
+            .ToArrayAsync();
+
+        return cities;
+    }
 }

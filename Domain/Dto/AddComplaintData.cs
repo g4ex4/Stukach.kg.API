@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Domain.Dto;
+﻿namespace Domain.Dto;
 
 public class AddComplaintData
 {

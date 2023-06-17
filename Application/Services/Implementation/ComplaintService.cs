@@ -19,8 +19,8 @@ public class ComplaintService : IComplaintService
     private readonly OpenCageApiClient _openCageApiClient;
     private readonly IAddressService _addressService;
 
-    public ComplaintService(IUnitOfWork unitOfWork, 
-        IMapper mapper, 
+    public ComplaintService(IUnitOfWork unitOfWork,
+        IMapper mapper,
         OpenCageApiClient openCageApiClient,
         IAddressService addressService)
     {
@@ -62,7 +62,7 @@ public class ComplaintService : IComplaintService
         return new Response(200, "Жалоба успешно отправлена!", true);
     }
 
-    public async Task<Response> PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance)
+    public async Task<Response> PutComplaintImportance(long userId, long complaintId, ComplaintImportance importance)
     {
         var complaint = await _unitOfWork
             .GetRepository<Complaint>()
@@ -72,6 +72,7 @@ public class ComplaintService : IComplaintService
         {
             throw new NotFoundException(typeof(Complaint).ToString(), complaintId);
         }
+
         var userComplaint = await _unitOfWork
                                 .GetRepository<UserComplaint>()
                                 .FirstOrDefaultAsync(x => x.UserId == userId && x.ComplaintId == complaintId)
@@ -94,6 +95,7 @@ public class ComplaintService : IComplaintService
             default:
                 throw new ArgumentOutOfRangeException(nameof(importance), importance, null);
         }
+
         complaint.UserComplaints.Add(userComplaint);
         _unitOfWork.GetRepository<Complaint>().Update(complaint);
         await _unitOfWork.SaveChanges();
@@ -110,6 +112,8 @@ public class ComplaintService : IComplaintService
             .Include(x => x.Coordinate)
             .ThenInclude(x => x.City)
             .Include(x => x.Author)
+            .OrderBy(x => x.CountLike)
+            .ThenByDescending(x => x.CountDislike)
             .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
 
@@ -131,7 +135,7 @@ public class ComplaintService : IComplaintService
         return complaints;
     }
 
-    public async Task<Response> ChangeComplaintStatus(long complaintId, ComplaintStatus status)
+    public async Task<Response> PutComplaintStatus(long complaintId, ComplaintStatus status)
     {
         var complaint = await _unitOfWork
             .GetRepository<Complaint>()
@@ -140,7 +144,10 @@ public class ComplaintService : IComplaintService
         {
             throw new NotFoundException(typeof(Complaint).ToString(), complaintId);
         }
+
         complaint.Status = status;
+        _unitOfWork.GetRepository<Complaint>().Update(complaint);
+        await _unitOfWork.SaveChanges();
         return new Response(200, "Статус изменен успешно!", true);
     }
 
@@ -155,26 +162,48 @@ public class ComplaintService : IComplaintService
             .ThenInclude(x => x.City)
             .Include(x => x.Author)
             .Where(x => x.Status == status)
+            .OrderBy(x => x.CountLike)
+            .ThenByDescending(x => x.CountDislike)
             .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
-        
 
         return complaints;
     }
 
-    public async Task<User[]> GetAllUsers()
-    {
-        var result = await _unitOfWork.GetRepository<User>()
-            .GetAll()
-            .ToArrayAsync();
-        return result;
-    }
-
-    
-    public async Task<Complaint> GetComplaintsById(long complainId)
+    public async Task<ComplaintData> GetComplaintsById(long complainId)
     {
         var complaint = await _unitOfWork.GetRepository<Complaint>()
-            .Where(x => x.Id == complainId).FirstOrDefaultAsync();
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.Region)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.District)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.City)
+            .Include(x => x.Author)
+            .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(x => x.Id == complainId);
         return complaint;
+    }
+
+    public async Task<ComplaintData[]> GetComplaintByAddress(long? regionId, long? districtId, long? cityId)
+    {
+        var complaints = await _unitOfWork.GetRepository<Complaint>()
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.Region)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.District)
+            .Include(x => x.Coordinate)
+            .ThenInclude(x => x.City)
+            .Include(x => x.Author)
+            .Where(x => x.Coordinate.RegionId == regionId 
+                        && (districtId == null || x.Coordinate.DistrictId == districtId )
+                        && (cityId == null || x.Coordinate.CityId == cityId))
+            .OrderBy(x => x.CountLike)
+            .ThenByDescending(x => x.CountDislike)
+            .ProjectTo<ComplaintData>(_mapper.ConfigurationProvider)
+            .ToArrayAsync();
+
+
+        return complaints;
     }
 }

@@ -1,6 +1,5 @@
 using Dal;
 using WebApi;
-using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +27,6 @@ if (app.Environment.IsDevelopment())
             ("/swagger/v1/swagger.json", "Stukach.kg Api")
     );
 }
-app.ConfigureExceptionHandler();
 app.UseHsts();
 app.UseStaticFiles();
 app.UseHttpsRedirection();

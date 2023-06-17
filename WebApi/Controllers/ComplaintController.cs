@@ -31,10 +31,10 @@ public class ComplaintController : Controller
         return Ok(result);
     }
     
-    [HttpPut("put-complaint-status")]
-    public async Task<IActionResult> PutComplaintStatus(long userId, long complaintId, ComplaintImportance importance)
+    [HttpPut("put-complaint-importance")]
+    public async Task<IActionResult> PutComplaintImportance(long userId, long complaintId, ComplaintImportance importance)
     {
-        var result = await _complaintService.PutStatusComplaint(userId, complaintId, importance);
+        var result = await _complaintService.PutComplaintImportance(userId, complaintId, importance);
 
         return Ok(result);
     }
@@ -48,15 +48,15 @@ public class ComplaintController : Controller
         return Ok(result);
     }
 
-    [HttpPut("put-complaint-status-for-admin")]
-    public async Task<IActionResult> ChangeComplaintStatus(long complaintId, ComplaintStatus status)
+    [HttpPut("put-complaint-status")]
+    public async Task<IActionResult> PutComplaintStatus(long complaintId, ComplaintStatus status)
     {
-        var result = await _complaintService.ChangeComplaintStatus(complaintId, status);
+        var result = await _complaintService.PutComplaintStatus(complaintId, status);
 
         return Ok(result);
     }
 
-    [HttpGet("Get-complaints-byComplaintStatus")]
+    [HttpGet("get-complaints-by-status")]
     [ProducesResponseType(typeof(ComplaintData[]), 200)]
     public async Task<IActionResult> GetComplaintsByStatus(ComplaintStatus status)
     {
@@ -64,19 +64,20 @@ public class ComplaintController : Controller
         return Ok(result);
     }
 
-    [HttpGet("Get-allUsers")]
-    [ProducesResponseType(typeof(User[]), 200)]
-    public async Task<IActionResult> GetAllUsers()
-    {
-        var result = await _complaintService.GetAllUsers();
-        return Ok(result);
-    }
 
-    [HttpGet("Get-complaints-byId")]
+    [HttpGet("get-complaints-by-id")]
     [ProducesResponseType(typeof(Complaint[]), 200)]
     public async Task<IActionResult> GetComplaintsById(long complaintId)
     {
         var result = await _complaintService.GetComplaintsById(complaintId);
+        return Ok(result);
+    }
+
+    [HttpGet("get-complaints-by-address")]
+    public async Task<IActionResult> GetComplaintsByAddress(long? regionId, long? districtId, long? cityId)
+    {
+        var result = await _complaintService.GetComplaintByAddress(regionId, districtId, cityId);
+        
         return Ok(result);
     }
 }

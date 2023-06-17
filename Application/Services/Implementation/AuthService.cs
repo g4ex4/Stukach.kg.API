@@ -3,6 +3,7 @@ using Dal.interfaces;
 using Domain.Common;
 using Domain.Dto;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation;
 
@@ -44,5 +45,14 @@ public class AuthService : IAuthService
         return new AuthResponse(200, "Успешная регистрация", true, newUser.Id);
     }
     
+
+    public async Task<User[]> GetAllUsers()
+    {
+        var result = await _unitOfWork.GetRepository<User>()
+            .GetAll()
+            .ToArrayAsync();
+        return result;
+    }
+
     
 }
