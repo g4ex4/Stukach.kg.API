@@ -36,7 +36,8 @@ namespace WebApi.Middleware
                 result = JsonSerializer.Serialize(new { error = exception.Message });
             }
 
-            return context.Response.WriteAsync(result);
+            return context.Response.WriteAsync(new Response
+                (context.Response.StatusCode, result, false).ToString());
         }
     }
 }
