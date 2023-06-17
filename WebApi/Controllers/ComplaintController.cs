@@ -53,4 +53,19 @@ public class ComplaintController : Controller
         var response = _openCageApiClient.Geocode($"{coordinateData.Latitude}+{coordinateData.Longitude}");
         return Ok(response);
     }
+
+    [HttpPut("put-complaint-status-for-admin")]
+    public async Task<IActionResult> ChangeComplaintStatus(long complaintId, ComplaintStatus status)
+    {
+        await _complaintService.ChangeComplaintStatus(complaintId, status);
+
+        return Ok();
+    }
+
+    [HttpGet("Get-complaints-byStatus")]
+    public async Task<IActionResult> GetComplaintsByStatus(ComplaintStatus status)
+    {
+        await _complaintService.GetComplaintsByStatus(status);
+        return Ok();
+    }
 }

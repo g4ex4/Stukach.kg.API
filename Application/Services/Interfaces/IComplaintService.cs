@@ -1,4 +1,5 @@
-﻿using Domain.Dto;
+﻿using Domain.Common;
+using Domain.Dto;
 using Domain.Enums;
 
 namespace Application.Services.Interfaces;
@@ -6,6 +7,8 @@ namespace Application.Services.Interfaces;
 public interface IComplaintService : IService
 {
     Task AddComplaint(AddComplaintData complaint);
-    Task PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance);
+    Task<Response> PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance);
     Task<ComplaintData[]> GetComplaints(long? userId);
+    Task<Response> ChangeComplaintStatus(long complaintId, ComplaintStatus status);
+    Task<ComplaintData[]> GetComplaintsByStatus(ComplaintStatus status);
 }

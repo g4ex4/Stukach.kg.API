@@ -2,6 +2,7 @@
 using Application.Services.Interfaces;
 using AutoMapper;
 using Dal.interfaces;
+using Domain.Common;
 using Domain.Dto;
 using Domain.Enums;
 using Domain.Models;
@@ -59,12 +60,15 @@ public class ComplaintService : IComplaintService
         await _unitOfWork.SaveChanges();
     }
 
-    public async Task PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance)
+    public async Task<Response> PutStatusComplaint(long userId, long complaintId, ComplaintImportance importance)
     {
         var complaint = await _unitOfWork
             .GetRepository<Complaint>()
             .FirstOrDefaultAsync(x => x.Id == complaintId);
-
+        if (complaint == null)
+        {
+            throw new NotFoundException(typeof(Complaint).ToString(), complaintId);
+        }
         var userComplaint = await _unitOfWork
                                 .GetRepository<UserComplaint>()
                                 .FirstOrDefaultAsync(x => x.UserId == userId && x.ComplaintId == complaintId)
@@ -87,6 +91,7 @@ public class ComplaintService : IComplaintService
             default:
                 throw new ArgumentOutOfRangeException(nameof(importance), importance, null);
         }
+        return new Response(200, "Изменено успешно", true);
     }
 
     public async Task<ComplaintData[]> GetComplaints(long? userId)
@@ -115,6 +120,41 @@ public class ComplaintService : IComplaintService
                 Name = cs.Name,
                 Description = cs.Description
             };
+        return userComplaints.ToArray();
+    }
+
+    public async Task<Response> ChangeComplaintStatus(long complaintId, ComplaintStatus status)
+    {
+        var complaint = await _unitOfWork
+            .GetRepository<Complaint>()
+            .FirstOrDefaultAsync(x => x.Id == complaintId);
+        if (complaint == null)
+        {
+            throw new NotFoundException(typeof(Complaint).ToString(), complaintId);
+        }
+        complaint.Status = status;
+        return new Response(200, "Статус изменен успешно!", true);
+    }
+
+    public async Task<ComplaintData[]> GetComplaintsByStatus(ComplaintStatus status)
+    {
+        var complaints = await _unitOfWork.GetRepository<Complaint>()
+            .Where(x => x.Status == status)
+            .ToArrayAsync();
+        
+
+        var userComplaints = from cs in complaints
+                             select new ComplaintData()
+                             {
+                                 Id = cs.Id,
+                                 Author = new UserData() { PhoneNumber = _unitOfWork.GetRepository<User>().FirstOrDefaultAsync(x => x.Id == cs.AuthorId).Result.PhoneNumber },
+                                 CountLike = cs.CountLike,
+                                 CountDislike = cs.CountDislike,
+                                 Date = cs.Date,
+                                 ImageUrl = cs.ImageUrl,
+                                 Name = cs.Name,
+                                 Description = cs.Description
+                             };
         return userComplaints.ToArray();
     }
 }
