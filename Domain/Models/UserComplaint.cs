@@ -5,11 +5,11 @@ namespace Domain.Models;
 
 public class UserComplaint : IBaseEntity
 {
-    public long UserId { get; set; }
+    public long? UserId { get; set; }
 
-    public long ComplaintId { get; set; }
+    public long? ComplaintId { get; set; }
 
-    public ComplaintImportance Importance { get; set; }
+    public ComplaintImportance? Importance { get; set; }
 
     public User User { get; set; }
 

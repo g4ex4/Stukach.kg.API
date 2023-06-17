@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Domain.Dto;
+﻿namespace Domain.Dto;
 
 public class AddComplaintData
 {
     public long UserId { get; set; }
-    
+
     public string Name { get; set; }
 
-    public IFormFile Image { get; set; }
+    public string Description { get; set; }
 
     public DateTime Date { get; set; }
 

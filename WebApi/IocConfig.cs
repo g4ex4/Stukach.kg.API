@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Integrations.Geocoding;
+using Application.Services;
 using Dal;
 using Dal.Implementation;
 using Dal.interfaces;
@@ -59,6 +60,8 @@ public static class IocConfig
                 services.AddScoped(servicePair.serviceInterface, implementation);
             }
         }
+
+        services.AddSingleton(new Geocoding("1ffd90282091439fb47d1573fe6a3b11"));
         
         return services;
     }

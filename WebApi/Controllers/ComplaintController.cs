@@ -1,4 +1,5 @@
-﻿using Application.Services.Interfaces;
+﻿using Application.Integrations.Geocoding;
+using Application.Services.Interfaces;
 using Domain.Dto;
 using Domain.Enums;
 using Microsoft.AspNetCore.Cors;
@@ -12,10 +13,12 @@ namespace WebApi.Controllers;
 public class ComplaintController : Controller
 {
     private readonly IComplaintService _complaintService;
+    private readonly Geocoding _geocoding;
 
-    public ComplaintController(IComplaintService complaintService)
+    public ComplaintController(IComplaintService complaintService, Geocoding geocoding)
     {
         _complaintService = complaintService;
+        _geocoding = geocoding;
     }
 
     [HttpPost("add-complaint")]
@@ -37,11 +40,17 @@ public class ComplaintController : Controller
 
     [HttpGet("get-complaints")]
     [ProducesResponseType(typeof(ComplaintData[]), 200)]
-    public async Task<IActionResult> GetComplaints(int page, int pageSize, long? userId = null)
+    public async Task<IActionResult> GetComplaints(long? userId = null)
     {
         var result = await _complaintService.GetComplaints(userId);
-        result = result.AsEnumerable().Skip((page - 1) * pageSize).Take(pageSize).ToArray();
 
         return Ok(result);
+    }
+
+    [HttpGet("check")]
+    public async Task<IActionResult> CheckCoordinate([FromQuery] CoordinateData coordinateData)
+    {
+        var response = _geocoding.Geocode(coordinateData);
+        return Ok(response);
     }
 }

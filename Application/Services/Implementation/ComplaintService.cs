@@ -24,16 +24,17 @@ public class ComplaintService : IComplaintService
         var newComplaint = new Complaint();
         newComplaint.Date = complaint.Date;
         newComplaint.Name = complaint.Name;
-        newComplaint.ImageUrl = complaint.Image.Name;
+        newComplaint.AuthorId = complaint.UserId;
+        // newComplaint.ImageUrl = complaint.Image.Name;
         newComplaint.Status = ComplaintStatus.Created;
-        var uploadsFolder = Path.Combine("wwwroot", "uploads");
-        var uniqueFileName = complaint.Image.FileName;
-        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        await using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await complaint.Image.CopyToAsync(stream);
-        }
+        // var uploadsFolder = Path.Combine("wwwroot", "uploads");
+        // var uniqueFileName = complaint.Image.FileName;
+        // var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+        //
+        // await using (var stream = new FileStream(filePath, FileMode.Create))
+        // {
+        //     await complaint.Image.CopyToAsync(stream);
+        // }
         await _unitOfWork.GetRepository<Complaint>().AddAsync(newComplaint);
         await _unitOfWork.SaveChanges();
     }
