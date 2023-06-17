@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Users.UserCommands.UserAuth
 {
-    public class UserAuthRequest : IRequest
+    public class UserLoginRequest : IRequest
     {
         public string PhoneNumber { get; set; }
         [DataType(DataType.Password)]

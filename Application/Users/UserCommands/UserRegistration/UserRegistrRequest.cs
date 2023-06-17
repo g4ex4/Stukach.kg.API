@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
+using Mediatr;
 
 namespace Application.Users.UserCommands.UserRegistration
 {
