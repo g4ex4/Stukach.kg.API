@@ -1,13 +1,15 @@
-﻿namespace Domain.Dto;
+﻿using Domain.Models;
 
-public class AuthResponse
+namespace Domain.Dto;
+
+public class AuthResponse : Response
 {
-    public AuthResponse(string message, long userId)
+    public AuthResponse(int statusCode, string message, bool success, long userId)
+        : base (statusCode, message, success)
     {
-        Message = message;
         UserId = userId;
     }
 
-    public string Message { get; set; }
+    
     public long UserId { get; set; }
 }

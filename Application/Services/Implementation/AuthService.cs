@@ -1,5 +1,6 @@
 ﻿using Application.Services.Interfaces;
 using Dal.interfaces;
+using Domain.Common;
 using Domain.Dto;
 using Domain.Models;
 
@@ -14,15 +15,23 @@ public class AuthService : IAuthService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<AuthResponse> Login(LoginRegisterData loginRegister)
+    public async Task<Response> Login(LoginRegisterData loginRegister)
     {
         var user = await _unitOfWork.GetRepository<User>().FirstOrDefaultAsync(x =>
             x.PhoneNumber == loginRegister.PhoneNumber && x.Password == loginRegister.Password);
-        return user is not null ? new AuthResponse("Успешная авторизация", user.Id) : new AuthResponse("Неудачно", 0);
+        return user is not null
+            ? new Response(200, "Успешная регистрация!", true)
+            : new Response(400, "Неверный номер или пароль!", false);
     }
 
     public async Task<AuthResponse> Register(LoginRegisterData loginRegister)
     {
+        var result = await _unitOfWork.GetRepository<User>()
+            .FirstOrDefaultAsync(x => x.PhoneNumber == loginRegister.PhoneNumber);
+        if (result is not null)
+        {
+            throw new DException("Такой пользователь существует!");
+        }
         var newUser = new User()
         {
             PhoneNumber = loginRegister.PhoneNumber,
@@ -32,7 +41,7 @@ public class AuthService : IAuthService
         await _unitOfWork.GetRepository<User>().AddAsync(newUser);
         await _unitOfWork.SaveChanges();
 
-        return new AuthResponse("Успешная регистрация", newUser.Id);
+        return new AuthResponse(200, "Успешная регистрация", true, newUser.Id);
     }
     
     

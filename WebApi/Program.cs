@@ -1,5 +1,6 @@
 using Dal;
 using WebApi;
+using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHsts();
-
+app.ConfigureExceptionHandler();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
