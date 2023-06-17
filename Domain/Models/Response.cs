@@ -18,5 +18,9 @@ namespace Domain.Models
             Message = message;
             IsSuccess = isSuccess;
         }
+
+        public Response()
+        {
+        }
     }
 }

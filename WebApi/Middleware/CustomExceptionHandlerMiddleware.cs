@@ -31,12 +31,19 @@ namespace WebApi.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
 
-            if (result == string.Empty)
-            {
-                result = JsonSerializer.Serialize(new { error = exception.Message });
-            }
 
-            return context.Response.WriteAsync(result);
+            var response = new Response()
+            {
+                StatusCode = (int)code,
+                Message = result,
+                IsSuccess = false
+            };
+            var jsonResponse = JsonSerializer.Serialize(response);
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = response.StatusCode;
+
+            // Отправка JSON-ответа клиенту
+            return context.Response.WriteAsync(jsonResponse);
         }
     }
 }
