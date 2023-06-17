@@ -67,9 +67,7 @@ public class ComplaintController : Controller
     [ProducesResponseType(typeof(Complaint[]), 200)]
     public async Task<IActionResult> GetComplaintsByStatus(ComplaintStatus status)
     {
-        await _complaintService.GetComplaintsByStatus(status);
-        return Ok();
+        var result = await _complaintService.GetComplaintsByStatus(status);
+        return Ok(result);
     }
-
-
 }

@@ -30,7 +30,7 @@ public static class IocConfig
         {
             opt.UseSqlServer(configuration.GetConnectionString("AppDbContext"));
         });
-        services.AddTransient<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

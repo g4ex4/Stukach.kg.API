@@ -19,19 +19,13 @@ public class AddressService : IAddressService
     {
         var response = geoCodeResponse.Results[0].Components;
 
-        var cityName = response.City ?? response.Hamlet ?? response.Village;
+        var cityName = response.City ?? response.Hamlet ?? response.Village ?? response.Town;
 
         var city = await _unitOfWork.GetRepository<City>()
-            .FirstOrDefaultAsync(x => x.Name == cityName);
-
-        if (city is null)
+            .FirstOrDefaultAsync(x => x.Name == cityName) ?? new City()
         {
-            city = new City()
-            {
-                Name = cityName
-            };
-            await _unitOfWork.GetRepository<City>().AddAsync(city);
-        }
+            Name = cityName
+        };
 
         var district = await _unitOfWork.GetRepository<District>()
             .Include(x => x.Cities)
@@ -43,13 +37,12 @@ public class AddressService : IAddressService
         }
         if (district is null && response.County is not null)
         {
-            district = new District()
+            district = new District
             {
-                Name = response.County
+                Name = response.County,
+                Cities = new List<City>()
             };
-            district.Cities = new List<City>();
             district.Cities.Add(city);
-            await _unitOfWork.GetRepository<District>().AddAsync(district);
         }
 
         var region = await _unitOfWork.GetRepository<Region>()
@@ -60,22 +53,20 @@ public class AddressService : IAddressService
         if (region is not null)
         {
             if(district is not null) region.Districts.Add(district);
-            region.Cities.Add(city);
-        }
-        if (region is null && response.State is not null)
-        {
-            region = new Region()
-            {
-                Name = response.State
-            };
-            region.Districts = new List<District>();
-            region.Cities = new List<City>();
-            if(district is not null) region.Districts.Add(district);
-            region.Cities.Add(city);
-            await _unitOfWork.GetRepository<Region>().AddAsync(region);
+            else region.Cities.Add(city);
         }
 
-        await _unitOfWork.SaveChanges();
+        if (region is not null || response.State is null)
+            return new Tuple<Region, District, City>(region, district, city);
+        region = new Region()
+        {
+            Name = response.State
+        };
+        region.Districts = new List<District>();
+        region.Cities = new List<City>();
+        if(district is not null) region.Districts.Add(district);
+        region.Cities.Add(city);
+
         return new Tuple<Region, District, City>(region, district, city);
     }
 }

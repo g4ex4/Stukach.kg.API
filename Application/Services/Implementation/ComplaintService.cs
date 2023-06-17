@@ -7,6 +7,7 @@ using Domain.Dto;
 using Domain.Enums;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using FileIO = System.IO.File;
 
 namespace Application.Services.Implementation;
 
@@ -35,16 +36,14 @@ public class ComplaintService : IComplaintService
         newComplaint.Name = complaint.Name;
         newComplaint.AuthorId = complaint.UserId;
         newComplaint.Description = complaint.Description;
-        // newComplaint.ImageUrl = complaint.Image.Name;
         newComplaint.Status = ComplaintStatus.Created;
-        // var uploadsFolder = Path.Combine("wwwroot", "uploads");
-        // var uniqueFileName = complaint.Image.FileName;
-        // var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-        //
-        // await using (var stream = new FileStream(filePath, FileMode.Create))
-        // {
-        //     await complaint.Image.CopyToAsync(stream);
-        // }
+
+        var fileName = Guid.NewGuid() + ".jpeg";
+        var fullPath = Path.Combine("wwwroot", "Photos", fileName);
+        var bytes = Convert.FromBase64String(complaint.Image);
+        await FileIO.WriteAllBytesAsync(fullPath, bytes);
+
+        newComplaint.ImageUrl = fileName;
         var geoResponse = await _openCageApiClient
             .Geocode($"{complaint.Coordinate.Latitude}+{complaint.Coordinate.Longitude}");
         var address = await _addressService.FillAddress(geoResponse);
@@ -56,6 +55,7 @@ public class ComplaintService : IComplaintService
             District = address.Item2,
             City = address.Item3
         };
+        await _unitOfWork.GetRepository<Coordinate>().AddAsync(newComplaint.Coordinate);
         await _unitOfWork.GetRepository<Complaint>().AddAsync(newComplaint);
         await _unitOfWork.SaveChanges();
     }
@@ -141,7 +141,6 @@ public class ComplaintService : IComplaintService
         var complaints = await _unitOfWork.GetRepository<Complaint>()
             .Where(x => x.Status == status)
             .ToArrayAsync();
-       
         return complaints;
     }
 }

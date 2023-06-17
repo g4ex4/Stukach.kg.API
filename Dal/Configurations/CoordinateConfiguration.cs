@@ -20,9 +20,5 @@ public class CoordinateConfiguration : IEntityTypeConfiguration<Coordinate>
             .WithMany()
             .HasForeignKey(x => x.RegionId)
             .OnDelete(DeleteBehavior.NoAction);
-        builder.HasOne(x => x.Complaint)
-            .WithMany()
-            .HasForeignKey(x => x.ComplaintId)
-            .OnDelete(DeleteBehavior.NoAction);
     }
 }

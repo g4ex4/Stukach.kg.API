@@ -26,6 +26,9 @@ public class Component
     [JsonPropertyName("village")]
     public string? Village { get; set; }
 
+    [JsonPropertyName("town")]
+    public string? Town { get; set; }
+
     [JsonPropertyName("county")]
     public string? County { get; set; }
 

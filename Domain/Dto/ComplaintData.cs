@@ -16,6 +16,8 @@ public class ComplaintData
 
     public int? CountDislike { get; set; }
 
+    public string? FullAddress { get; set; }
+
     public DateTime? Date { get; set; }
 
     public ComplaintStatus? Status { get; set; }

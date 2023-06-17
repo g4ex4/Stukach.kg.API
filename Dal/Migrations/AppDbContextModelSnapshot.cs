@@ -45,7 +45,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Complaint", b =>
@@ -85,7 +85,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Complaints");
+                    b.ToTable("Complaints", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Coordinate", b =>
@@ -97,14 +97,12 @@ namespace Dal.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CityId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<long?>("ComplaintId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("DistrictId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<double?>("Latitude")
@@ -114,7 +112,6 @@ namespace Dal.Migrations
                         .HasColumnType("float");
 
                     b.Property<long?>("RegionId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -129,7 +126,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Coordinates");
+                    b.ToTable("Coordinates", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.District", b =>
@@ -151,7 +148,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Districts");
+                    b.ToTable("Districts", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Region", b =>
@@ -167,7 +164,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Regions");
+                    b.ToTable("Regions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.User", b =>
@@ -186,7 +183,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.UserComplaint", b =>
@@ -204,7 +201,7 @@ namespace Dal.Migrations
 
                     b.HasIndex("ComplaintId");
 
-                    b.ToTable("UserComplaints");
+                    b.ToTable("UserComplaints", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.City", b =>
@@ -237,9 +234,7 @@ namespace Dal.Migrations
                 {
                     b.HasOne("Domain.Models.City", "City")
                         .WithMany()
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CityId");
 
                     b.HasOne("Domain.Models.Complaint", "Complaint")
                         .WithOne("Coordinate")
@@ -247,15 +242,11 @@ namespace Dal.Migrations
 
                     b.HasOne("Domain.Models.District", "District")
                         .WithMany()
-                        .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("DistrictId");
 
                     b.HasOne("Domain.Models.Region", "Region")
                         .WithMany()
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("RegionId");
 
                     b.Navigation("City");
 
