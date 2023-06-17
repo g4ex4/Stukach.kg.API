@@ -13,17 +13,9 @@ builder.Services
     .AddConfiguration(builder.Configuration)
     .AddUnitOfWork(builder.Configuration)
     .AddServices()
-    .AddAutoMapper();
+    .AddAutoMapper()
+    .AddCorsPolicy();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyHeader();
-        policy.AllowAnyMethod();
-        policy.AllowAnyOrigin();
-    });
-});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,7 +36,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 using var scope = app.Services.CreateScope();
