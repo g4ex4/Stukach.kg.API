@@ -70,7 +70,7 @@ public class ComplaintService : IComplaintService
             .FirstOrDefaultAsync(x => x.Id == complaintId);
         if (complaint == null)
         {
-            throw new NotFoundException(typeof(Complaint).ToString(), complaintId);
+            throw new NotFoundException(nameof(Complaint), complaintId);
         }
 
         var userComplaint = await _unitOfWork
@@ -142,7 +142,7 @@ public class ComplaintService : IComplaintService
             .FirstOrDefaultAsync(x => x.Id == complaintId);
         if (complaint == null)
         {
-            throw new NotFoundException(typeof(Complaint).ToString(), complaintId);
+            throw new NotFoundException(nameof(Complaint), complaintId);
         }
 
         complaint.Status = status;
@@ -211,8 +211,9 @@ public class ComplaintService : IComplaintService
     {
         var complaint = _unitOfWork.GetRepository<Complaint>()
             .FirstOrDefaultAsync(x => x.Id == userId);
+        
         if (complaint is null)
-            throw new NotFoundException("typeof(Complaint)", userId);
+            throw new NotFoundException(nameof(Complaint), userId);
         return complaint;
     }
 }
