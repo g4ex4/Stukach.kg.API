@@ -42,4 +42,12 @@ public class BrigadeController : Controller
         return Ok(result);
     }
     
+    [HttpDelete("Delete-BrigadeByNumber")]
+    public async Task<IActionResult> DeleteBridageByNumber(int bridageNum)
+    {
+        var result = _brigadeService.DeleteBrigadeByNumber(bridageNum);
+        return Ok(result);
+    }
+
+
 }

@@ -56,4 +56,16 @@ public class BrigadeService : IBrigadeService
             .Where(x => x.BrigadeId == brigadeId);
         return await complaints.ToArrayAsync();
     }
+
+    public async Task<Response> DeleteBrigadeByNumber(int brigadeNum)
+    {
+        var brigade = await _unitOfWork.GetRepository<Brigade>()
+            .FirstOrDefaultAsync(x => x.BrigadeNumber == brigadeNum);
+        if (brigade is null)
+            throw new NotFoundException(nameof(brigade), brigadeNum);
+        _unitOfWork.GetRepository<Brigade>().Delete(brigade);
+        await _unitOfWork.SaveChanges();
+        return new Response(200, "Бригада успешна удалена", true);
+    }
+
 }
