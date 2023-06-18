@@ -206,4 +206,13 @@ public class ComplaintService : IComplaintService
 
         return complaints;
     }
+
+    public Task<Complaint> GetComplaintsByUserId(long userId)
+    {
+        var complaint = _unitOfWork.GetRepository<Complaint>()
+            .FirstOrDefaultAsync(x => x.Id == userId);
+        if (complaint is null)
+            throw new NotFoundException("typeof(Complaint)", userId);
+        return complaint;
+    }
 }

@@ -80,4 +80,12 @@ public class ComplaintController : Controller
         
         return Ok(result);
     }
+    
+    [HttpGet("get-complaints-by-id")]
+    [ProducesResponseType(typeof(Complaint[]), 200)]
+    public async Task<IActionResult> GetComplaintsByUserId(long userId)
+    {
+        var result = await _complaintService.GetComplaintsByUserId(userId);
+        return Ok(result);
+    }
 }
